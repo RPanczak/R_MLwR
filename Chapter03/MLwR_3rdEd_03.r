@@ -4,7 +4,7 @@
 ## Step 2: Exploring and preparing the data ---- 
 
 # import the CSV file
-wbcd <- read.csv("wisc_bc_data.csv", stringsAsFactors = FALSE)
+wbcd <- read.csv("Chapter03/wisc_bc_data.csv", stringsAsFactors = FALSE)
 
 # examine the structure of the wbcd data frame
 str(wbcd)
@@ -13,10 +13,11 @@ str(wbcd)
 wbcd <- wbcd[-1]
 
 # table of diagnosis
-table(wbcd$diagnosis)
+table(wbcd$diagnosis, useNA = "always")
 
 # recode diagnosis as a factor
-wbcd$diagnosis <- factor(wbcd$diagnosis, levels = c("B", "M"),
+wbcd$diagnosis <- factor(wbcd$diagnosis, 
+                         levels = c("B", "M"),
                          labels = c("Benign", "Malignant"))
 
 # table or proportions with more informative labels
@@ -31,21 +32,25 @@ normalize <- function(x) {
 }
 
 # test normalization function - result should be identical
-normalize(c(1, 2, 3, 4, 5))
-normalize(c(10, 20, 30, 40, 50))
+table(
+  normalize(c(1, 2, 3, 4, 5)) == 
+    normalize(c(10, 20, 30, 40, 50))
+)
 
 # normalize the wbcd data
+names(wbcd)
 wbcd_n <- as.data.frame(lapply(wbcd[2:31], normalize))
 
 # confirm that normalization worked
+summary(wbcd$area_mean)
 summary(wbcd_n$area_mean)
 
 # create training and test data
+nrow(wbcd_n)
 wbcd_train <- wbcd_n[1:469, ]
 wbcd_test <- wbcd_n[470:569, ]
 
 # create labels for training and test data
-
 wbcd_train_labels <- wbcd[1:469, 1]
 wbcd_test_labels <- wbcd[470:569, 1]
 
@@ -54,8 +59,12 @@ wbcd_test_labels <- wbcd[470:569, 1]
 # load the "class" library
 library(class)
 
-wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
+wbcd_test_pred <- knn(train = wbcd_train, 
+                      test = wbcd_test,
                       cl = wbcd_train_labels, k = 21)
+
+class(wbcd_test_pred)
+str(wbcd_test_pred)
 
 ## Step 4: Evaluating model performance ----
 
@@ -63,7 +72,8 @@ wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
 library(gmodels)
 
 # Create the cross tabulation of predicted vs. actual
-CrossTable(x = wbcd_test_labels, y = wbcd_test_pred,
+CrossTable(x = wbcd_test_labels, 
+           y = wbcd_test_pred,
            prop.chisq = FALSE)
 
 ## Step 5: Improving model performance ----
@@ -72,6 +82,7 @@ CrossTable(x = wbcd_test_labels, y = wbcd_test_pred,
 wbcd_z <- as.data.frame(scale(wbcd[-1]))
 
 # confirm that the transformation was applied correctly
+summary(wbcd$area_mean)
 summary(wbcd_z$area_mean)
 
 # create training and test datasets
@@ -79,11 +90,13 @@ wbcd_train <- wbcd_z[1:469, ]
 wbcd_test <- wbcd_z[470:569, ]
 
 # re-classify test cases
-wbcd_test_pred <- knn(train = wbcd_train, test = wbcd_test,
+wbcd_test_pred <- knn(train = wbcd_train, 
+                      test = wbcd_test,
                       cl = wbcd_train_labels, k = 21)
 
 # Create the cross tabulation of predicted vs. actual
-CrossTable(x = wbcd_test_labels, y = wbcd_test_pred,
+CrossTable(x = wbcd_test_labels, 
+           y = wbcd_test_pred,
            prop.chisq = FALSE)
 
 # try several different values of k
