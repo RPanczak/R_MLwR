@@ -4,7 +4,7 @@
 ## Step 2: Exploring and preparing the data ---- 
 
 # read the sms data into the sms data frame
-sms_raw <- read.csv("sms_spam.csv", stringsAsFactors = FALSE)
+sms_raw <- read.csv("Chapter04/sms_spam.csv", stringsAsFactors = FALSE)
 
 # examine the structure of the sms data
 str(sms_raw)
@@ -35,7 +35,10 @@ as.character(sms_corpus[[1]])
 as.character(sms_corpus_clean[[1]])
 
 sms_corpus_clean <- tm_map(sms_corpus_clean, removeNumbers) # remove numbers
+
+stopwords()
 sms_corpus_clean <- tm_map(sms_corpus_clean, removeWords, stopwords()) # remove stop words
+
 sms_corpus_clean <- tm_map(sms_corpus_clean, removePunctuation) # remove punctuation
 
 # tip: create a custom function to replace (rather than remove) punctuation
@@ -80,6 +83,8 @@ sms_dtm3 <- DocumentTermMatrix(sms_corpus, control = list(
 sms_dtm
 sms_dtm2
 sms_dtm3
+
+rm(sms_dtm2, sms_dtm3)
 
 # creating training and test datasets
 sms_dtm_train <- sms_dtm[1:4169, ]
