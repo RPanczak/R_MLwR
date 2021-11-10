@@ -1,4 +1,6 @@
 ##### Chapter 5: Classification using Decision Trees and Rules -------------------
+library(skimr)
+import::from("sjmisc", "frq")
 
 #### Part 1: Decision Trees -------------------
 
@@ -11,19 +13,20 @@ curve(-x * log2(x) - (1 - x) * log2(1 - x),
 
 ## Example: Identifying Risky Bank Loans ----
 ## Step 2: Exploring and preparing the data ----
-credit <- read.csv("credit.csv", stringsAsFactors = TRUE)
-str(credit)
+credit <- read.csv("Chapter05/credit.csv", stringsAsFactors = TRUE)
+
+skim(credit)
 
 # look at two characteristics of the applicant
-table(credit$checking_balance)
-table(credit$savings_balance)
+frq(credit$checking_balance)
+frq(credit$savings_balance)
 
 # look at two characteristics of the loan
 summary(credit$months_loan_duration)
 summary(credit$amount)
 
 # look at the class variable
-table(credit$default)
+frq(credit$default)
 
 # create a random sample for training and test data
 RNGversion("3.5.2") # use an older random number generator to match the book
@@ -37,23 +40,31 @@ credit_train <- credit[train_sample, ]
 credit_test  <- credit[-train_sample, ]
 
 # check the proportion of class variable
-prop.table(table(credit_train$default))
-prop.table(table(credit_test$default))
+frq(credit_train$default)
+frq(credit_test$default)
 
 ## Step 3: Training a model on the data ----
 # build the simplest decision tree
 library(C50)
 credit_model <- C5.0(credit_train[-17], credit_train$default)
 
+# credit_model <- C5.0(credit_train[-17], credit_train$default,
+#                      rules = TRUE)
+
 # display simple facts about the tree
 credit_model
 
 # display detailed information about the tree
 summary(credit_model)
+plot(credit_model)
+C5imp(credit_model)
 
 ## Step 4: Evaluating model performance ----
 # create a factor vector of predictions on test data
 credit_pred <- predict(credit_model, credit_test)
+
+credit_pred
+summary(credit_pred)
 
 # cross tabulation of predicted versus actual classes
 library(gmodels)
@@ -67,8 +78,14 @@ CrossTable(credit_test$default, credit_pred,
 # boosted decision tree with 10 trials
 credit_boost10 <- C5.0(credit_train[-17], credit_train$default,
                        trials = 10)
+# credit_boost10 <- C5.0(credit_train[-17], credit_train$default,
+#                        trials = 10,
+#                        rules = TRUE)
+
 credit_boost10
 summary(credit_boost10)
+plot(credit_boost10)
+C5imp(credit_boost10)
 
 credit_boost_pred10 <- predict(credit_boost10, credit_test)
 CrossTable(credit_test$default, credit_boost_pred10,
@@ -83,12 +100,20 @@ names(matrix_dimensions) <- c("predicted", "actual")
 matrix_dimensions
 
 # build the matrix
-error_cost <- matrix(c(0, 1, 4, 0), nrow = 2, dimnames = matrix_dimensions)
+error_cost <- matrix(c(0, 1, 4, 0), nrow = 2, 
+                     dimnames = matrix_dimensions)
 error_cost
 
 # apply the cost matrix to the tree
 credit_cost <- C5.0(credit_train[-17], credit_train$default,
-                          costs = error_cost)
+                    costs = error_cost)
+# credit_cost <- C5.0(credit_train[-17], credit_train$default,
+#                     costs = error_cost,
+#                     rules = TRUE)
+
+plot(credit_cost)
+C5imp(credit_cost)
+
 credit_cost_pred <- predict(credit_cost, credit_test)
 
 CrossTable(credit_test$default, credit_cost_pred,
@@ -99,16 +124,16 @@ CrossTable(credit_test$default, credit_cost_pred,
 
 ## Example: Identifying Poisonous Mushrooms ----
 ## Step 2: Exploring and preparing the data ---- 
-mushrooms <- read.csv("mushrooms.csv", stringsAsFactors = TRUE)
+mushrooms <- read.csv("Chapter05/mushrooms.csv", stringsAsFactors = TRUE)
 
 # examine the structure of the data frame
-str(mushrooms)
+skim(mushrooms)
 
 # drop the veil_type feature
 mushrooms$veil_type <- NULL
 
 # examine the class distribution
-table(mushrooms$type)
+frq(mushrooms$type)
 
 ## Step 3: Training a model on the data ----
 library(OneR)
