@@ -1,10 +1,12 @@
 ##### Chapter 6: Regression Methods -------------------
+library(skimr)
+import::from("sjmisc", "frq")
 
 #### Part 1: Linear Regression -------------------
 
 ## Understanding regression ----
 ## Example: Space Shuttle Launch Data ----
-launch <- read.csv("challenger.csv")
+launch <- read.csv("Chapter06/challenger.csv")
 
 # estimate beta manually
 b <- cov(launch$temperature, launch$distress_ct) / var(launch$temperature)
@@ -18,6 +20,7 @@ a
 r <- cov(launch$temperature, launch$distress_ct) /
        (sd(launch$temperature) * sd(launch$distress_ct))
 r
+
 cor(launch$temperature, launch$distress_ct)
 
 # computing the slope using correlation
@@ -38,7 +41,7 @@ reg <- function(y, x) {
 }
 
 # examine the launch data
-str(launch)
+skim(launch)
 
 # test regression model with simple linear regression
 reg(y = launch$distress_ct, x = launch[2])
@@ -52,8 +55,8 @@ model
 
 ## Example: Predicting Medical Expenses ----
 ## Step 2: Exploring and preparing the data ----
-insurance <- read.csv("insurance.csv", stringsAsFactors = TRUE)
-str(insurance)
+insurance <- read.csv("Chapter06/insurance.csv", stringsAsFactors = TRUE)
+skim(insurance)
 
 # summarize the charges variable
 summary(insurance$expenses)
@@ -62,7 +65,7 @@ summary(insurance$expenses)
 hist(insurance$expenses)
 
 # table of region
-table(insurance$region)
+frq(insurance$region)
 
 # exploring relationships among features: correlation matrix
 cor(insurance[c("age", "bmi", "children", "expenses")])
@@ -143,16 +146,17 @@ sdr_b
 
 ## Example: Estimating Wine Quality ----
 ## Step 2: Exploring and preparing the data ----
-wine <- read.csv("whitewines.csv")
+wine <- read.csv("Chapter06/whitewines.csv")
 
 # examine the wine data
-str(wine)
+skim(wine)
 
 # the distribution of quality ratings
 hist(wine$quality)
 
 # summary statistics of the wine data
 summary(wine)
+nrow(wine)
 
 wine_train <- wine[1:3750, ]
 wine_test <- wine[3751:4898, ]
@@ -175,7 +179,7 @@ library(rpart.plot)
 rpart.plot(m.rpart, digits = 3)
 
 # a few adjustments to the diagram
-rpart.plot(m.rpart, digits = 4, fallen.leaves = TRUE, type = 3, extra = 101)
+rpart.plot(m.rpart, digits = 3, fallen.leaves = TRUE, type = 3, extra = 101)
 
 ## Step 4: Evaluate model performance ----
 
