@@ -1,12 +1,14 @@
 ##### Chapter 7: Neural Networks and Support Vector Machines -------------------
+library(skimr)
+import::from("sjmisc", "frq")
 
 ##### Part 1: Neural Networks -------------------
 ## Example: Modeling the Strength of Concrete  ----
 
 ## Step 2: Exploring and preparing the data ----
 # read in data and examine structure
-concrete <- read.csv("concrete.csv")
-str(concrete)
+concrete <- read.csv("Chapter07/concrete.csv")
+skim(concrete)
 
 # custom normalization function
 normalize <- function(x) { 
@@ -18,9 +20,11 @@ concrete_norm <- as.data.frame(lapply(concrete, normalize))
 
 # confirm that the range is now between zero and one
 summary(concrete_norm$strength)
+hist(concrete_norm$strength)
 
 # compared to the original minimum and maximum
 summary(concrete$strength)
+hist(concrete$strength)
 
 # create training and test data
 concrete_train <- concrete_norm[1:773, ]
@@ -56,7 +60,8 @@ set.seed(12345) # to guarantee repeatable results
 concrete_model2 <- neuralnet(strength ~ cement + slag +
                                ash + water + superplastic + 
                                coarseagg + fineagg + age,
-                               data = concrete_train, hidden = 5)
+                               data = concrete_train, 
+                             hidden = c(5))
 
 # plot the network
 plot(concrete_model2)
@@ -76,7 +81,8 @@ set.seed(12345) # to guarantee repeatable results
 concrete_model3 <- neuralnet(strength ~ cement + slag +
                                ash + water + superplastic + 
                                coarseagg + fineagg + age,
-                             data = concrete_train, hidden = c(5, 5), act.fct = softplus)
+                             data = concrete_train, hidden = c(5, 5), 
+                             act.fct = softplus)
 
 # plot the network
 plot(concrete_model3)
@@ -115,7 +121,7 @@ cor(strengths$pred_new, strengths$actual)
 
 ## Step 2: Exploring and preparing the data ----
 # read in data and examine structure
-letters <- read.csv("letterdata.csv", stringsAsFactors = TRUE)
+letters <- read.csv("Chapter07/letterdata.csv", stringsAsFactors = TRUE)
 str(letters)
 
 # divide into training and test data
