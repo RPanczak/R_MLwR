@@ -1,11 +1,13 @@
 ##### Chapter 8: Association Rules -------------------
+library(skimr)
+import::from("sjmisc", "frq")
 
 ## Example: Identifying Frequently-Purchased Groceries ----
 ## Step 2: Exploring and preparing the data ----
 
 # load the grocery data into a sparse matrix
 library(arules)
-groceries <- read.transactions("groceries.csv", sep = ",")
+groceries <- read.transactions("Chapter08/groceries.csv", sep = ",")
 summary(groceries)
 
 # look at the first five transactions
@@ -25,14 +27,16 @@ image(groceries[1:5])
 image(sample(groceries, 100))
 
 ## Step 3: Training a model on the data ----
-library(arules)
 
 # default settings result in zero rules learned
 apriori(groceries)
 
 # set better support and confidence levels to learn more rules
-groceryrules <- apriori(groceries, parameter = list(support =
-                          0.006, confidence = 0.25, minlen = 2))
+groceryrules <- apriori(groceries, 
+                        parameter = list(
+                          support = 0.006, 
+                          confidence = 0.25, 
+                          minlen = 2))
 groceryrules
 
 ## Step 4: Evaluating model performance ----
@@ -52,9 +56,9 @@ berryrules <- subset(groceryrules, items %in% "berries")
 inspect(berryrules)
 
 # writing the rules to a CSV file
-write(groceryrules, file = "groceryrules.csv",
+write(groceryrules, file = "Chapter08/groceryrules.csv",
       sep = ",", quote = TRUE, row.names = FALSE)
 
 # converting the rule set to a data frame
 groceryrules_df <- as(groceryrules, "data.frame")
-str(groceryrules_df)
+skim(groceryrules_df)
