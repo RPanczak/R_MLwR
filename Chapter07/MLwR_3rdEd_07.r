@@ -122,7 +122,7 @@ cor(strengths$pred_new, strengths$actual)
 ## Step 2: Exploring and preparing the data ----
 # read in data and examine structure
 letters <- read.csv("Chapter07/letterdata.csv", stringsAsFactors = TRUE)
-str(letters)
+skim(letters)
 
 # divide into training and test data
 letters_train <- letters[1:16000, ]
@@ -131,7 +131,8 @@ letters_test  <- letters[16001:20000, ]
 ## Step 3: Training a model on the data ----
 # begin by training a simple linear SVM
 library(kernlab)
-letter_classifier <- ksvm(letter ~ ., data = letters_train,
+letter_classifier <- ksvm(letter ~ ., 
+                          data = letters_train,
                           kernel = "vanilladot")
 
 # look at basic information about the model
@@ -148,25 +149,29 @@ table(letter_predictions, letters_test$letter)
 # look only at agreement vs. non-agreement
 # construct a vector of TRUE/FALSE indicating correct/incorrect predictions
 agreement <- letter_predictions == letters_test$letter
-table(agreement)
-prop.table(table(agreement))
+frq(agreement)
 
 ## Step 5: Improving model performance ----
 
 # change to a RBF kernel
 RNGversion("3.5.2") # use an older random number generator to match the book
 set.seed(12345)
-letter_classifier_rbf <- ksvm(letter ~ ., data = letters_train, kernel = "rbfdot")
+
+letter_classifier_rbf <- ksvm(letter ~ ., 
+                              data = letters_train, 
+                              kernel = "rbfdot")
+
 letter_predictions_rbf <- predict(letter_classifier_rbf, letters_test)
 
 agreement_rbf <- letter_predictions_rbf == letters_test$letter
-table(agreement_rbf)
-prop.table(table(agreement_rbf))
+frq(agreement_rbf)
 
 # test various values of the cost parameter
 cost_values <- c(1, seq(from = 5, to = 40, by = 5))
+cost_values
 
 RNGversion("3.5.2") # use an older random number generator to match the book
+
 accuracy_values <- sapply(cost_values, function(x) {
   set.seed(12345)
   m <- ksvm(letter ~ ., data = letters_train,
