@@ -7,6 +7,7 @@ import::from("sjmisc", "frq")
 
 # load the grocery data into a sparse matrix
 library(arules)
+groceries <- read.csv("Chapter08/groceries.csv", header = FALSE)
 groceries <- read.transactions("Chapter08/groceries.csv", sep = ",")
 summary(groceries)
 

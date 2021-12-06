@@ -1,7 +1,9 @@
 ##### Chapter 11: Improving Model Performance -------------------
+library(skimr)
+import::from("sjmisc", "frq")
 
 # load the credit dataset
-credit <- read.csv("credit.csv", stringsAsFactors = TRUE)
+credit <- read.csv("Chapter11/credit.csv", stringsAsFactors = TRUE)
 library(caret)
 
 ## Creating a simple tuned model ----

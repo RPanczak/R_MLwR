@@ -1,13 +1,15 @@
 ##### Chapter 9: Clustering with k-means -------------------
+library(skimr)
+import::from("sjmisc", "frq")
 
 ## Example: Finding Teen Market Segments ----
 ## Step 2: Exploring and preparing the data ----
-teens <- read.csv("snsdata.csv", stringsAsFactors = TRUE)
+teens <- read.csv("Chapter09/snsdata.csv", stringsAsFactors = TRUE)
 str(teens)
+skim(teens)
 
 # look at missing data for female variable
-table(teens$gender)
-table(teens$gender, useNA = "ifany")
+frq(teens$gender)
 
 # look at missing data for age variable
 summary(teens$age)
@@ -24,9 +26,9 @@ teens$female <- ifelse(teens$gender == "F" &
 teens$no_gender <- ifelse(is.na(teens$gender), 1, 0)
 
 # check our recoding work
-table(teens$gender, useNA = "ifany")
-table(teens$female, useNA = "ifany")
-table(teens$no_gender, useNA = "ifany")
+frq(teens$gender)
+frq(teens$female)
+frq(teens$no_gender)
 
 # finding the mean age by cohort
 mean(teens$age) # doesn't work

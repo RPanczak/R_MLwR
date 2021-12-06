@@ -1,16 +1,18 @@
 #### Chapter 12: Specialized Machine Learning Topics -------------------
+library(skimr)
+import::from("sjmisc", "frq")
 
 ## Making data "tidy" with the tidyverse packages ----
 
 # using the tibble package to create tibbles from data frames
 library(tibble)
-credit <- read.csv("credit.csv")
+credit <- read.csv("Chapter12/credit.csv")
 credit_tbl <- as_tibble(credit)
 credit_tbl
 
 # using dplyr to prepare tibbles
 library(dplyr)
-credit <- as_tibble(read.csv("credit.csv"))
+credit <- as_tibble(read.csv("Chapter12/credit.csv"))
 credit %>%
   filter(age >= 21) %>%
   mutate(years_loan_duration =
@@ -26,9 +28,9 @@ credit <- read_csv("credit.csv")
 ## working with data from proprietary sources with rio ----
 
 library(rio)
-credit <- import("credit.csv")
-export(credit, "credit.xlsx")
-convert("credit.csv", "credit.dta")
+credit <- import("Chapter12/credit.csv")
+export(credit, "Chapter12/credit.xlsx")
+convert("Chapter12/credit.csv", "Chapter12/credit.dta")
 
 ## working with SQL databases ----
 
@@ -37,7 +39,7 @@ library(DBI)
 library(SQLite)
 
 # creates a connection to the credit SQLite database
-con <- dbConnect(RSQLite::SQLite(), "credit.sqlite3")
+con <- dbConnect(RSQLite::SQLite(), "Chapter12/credit.sqlite3")
 dbListTables(con)
 
 # create a data frame from the result
@@ -64,7 +66,7 @@ con <- dbConnect(odbc::odbc(),
 
 # using a database backend with dplyr
 library(DBI)
-con <- dbConnect(RSQLite::SQLite(), "credit.sqlite3")
+con <- dbConnect(RSQLite::SQLite(), "Chapter12/credit.sqlite3")
 credit_tbl <- con %>% tbl("credit")
 
 library(dplyr)
@@ -90,12 +92,12 @@ odbcClose(my_db) # close the DB connection
 # using dplyr to work with a database
 # ...creating the sqlite database
 library(dplyr)
-credit <- read_csv("credit.csv")
-credit_db_conn <- src_sqlite("credit.sqlite3", create = TRUE)
+credit <- read_csv("Chapter12/credit.csv")
+credit_db_conn <- src_sqlite("Chapter12/credit.sqlite3", create = TRUE)
 copy_to(credit_db_conn, credit, temporary = FALSE)
 
 # ...accessing the sqlite database
-credit_db_conn <- src_sqlite("credit.sqlite3")
+credit_db_conn <- src_sqlite("Chapter12/credit.sqlite3")
 credit_tbl <- tbl(credit_db_conn, "credit")
 
 # querying tbl objects
@@ -195,7 +197,7 @@ betweenness(karate)
 ## with data.table
 
 library(data.table)
-credit <- fread("credit.csv")
+credit <- fread("Chapter12/credit.csv")
 
 credit[credit_history == "good", mean(amount)]
 credit[, mean(amount), by=.(credit_history)]
@@ -203,7 +205,7 @@ credit[, mean(amount), by=.(credit_history)]
 ## with ffdf
 
 library(ff)
-credit <- read.csv.ffdf(file = "credit.csv", header = TRUE)
+credit <- read.csv.ffdf(file = "Chapter12/credit.csv", header = TRUE)
 
 mean(credit$amount) # this results in an error
 
@@ -274,7 +276,7 @@ stopImplicitCluster()
 ## Parallel processing with caret ----
 
 library(caret)
-credit <- read.csv("credit.csv",, stringsAsFactors = TRUE)
+credit <- read.csv("Chapter12/credit.csv", stringsAsFactors = TRUE)
 
 # training a random forest without allowing parallel computing
 system.time(train(default ~ ., data = credit, method = "rf",
@@ -306,7 +308,7 @@ ml_binary_classification_evaluator(pred, metric_name = "areaUnderROC")
 
 ## Faster random forests with ranger
 library(ranger)
-credit <- read.csv("credit.csv", stringsAsFactors = TRUE)
+credit <- read.csv("Chapter12/credit.csv", stringsAsFactors = TRUE)
 
 m <- ranger(default ~ ., data = credit,
             num.trees = 500,
@@ -321,7 +323,7 @@ head(p$predictions)
 
 library(h2o)
 h2o_instance <- h2o.init()
-credit.hex <- h2o.uploadFile("credit.csv")
+credit.hex <- h2o.uploadFile("Chapter12/credit.csv")
 
 h2o.randomForest(y = "default",
                  training_frame = credit.hex,
