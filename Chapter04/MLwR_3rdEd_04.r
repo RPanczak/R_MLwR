@@ -1,4 +1,5 @@
 ##### Chapter 4: Classification using Naive Bayes --------------------
+import::from("sjmisc", "frq")
 
 ## Example: Filtering spam SMS messages ----
 ## Step 2: Exploring and preparing the data ---- 
@@ -14,7 +15,7 @@ sms_raw$type <- factor(sms_raw$type)
 
 # examine the type variable more carefully
 str(sms_raw$type)
-table(sms_raw$type)
+frq(sms_raw$type)
 
 # build a corpus using the text mining (tm) package
 library(tm)
