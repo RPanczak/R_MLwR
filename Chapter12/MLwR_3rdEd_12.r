@@ -6,13 +6,17 @@ import::from("sjmisc", "frq")
 
 # using the tibble package to create tibbles from data frames
 library(tibble)
+
 credit <- read.csv("Chapter12/credit.csv")
+
 credit_tbl <- as_tibble(credit)
 credit_tbl
 
 # using dplyr to prepare tibbles
 library(dplyr)
+
 credit <- as_tibble(read.csv("Chapter12/credit.csv"))
+
 credit %>%
   filter(age >= 21) %>%
   mutate(years_loan_duration =
@@ -23,11 +27,13 @@ credit %>%
 
 ## reading CSV files into tibbles with readr
 library(readr)
+
 credit <- read_csv("credit.csv")
 
 ## working with data from proprietary sources with rio ----
 
 library(rio)
+
 credit <- import("Chapter12/credit.csv")
 export(credit, "Chapter12/credit.xlsx")
 convert("Chapter12/credit.csv", "Chapter12/credit.dta")
@@ -54,9 +60,11 @@ dbDisconnect(con)
 # connecting to databases with the odbc package
 # (note: this is an example for illustration only and will need to be modified for your DB)
 library(DBI)
+
 con <- dbConnect(odbc:odbc(), "my_data_source_name")
 
 library(DBI)
+
 con <- dbConnect(odbc::odbc(),
                  database = "my_database",
                  uid = "my_username",
@@ -66,10 +74,12 @@ con <- dbConnect(odbc::odbc(),
 
 # using a database backend with dplyr
 library(DBI)
+
 con <- dbConnect(RSQLite::SQLite(), "Chapter12/credit.sqlite3")
 credit_tbl <- con %>% tbl("credit")
 
 library(dplyr)
+
 credit_tbl %>%
   filter(age >= 45) %>%
   select(age) %>%
@@ -80,6 +90,7 @@ credit_tbl %>%
 # (note: this is an example for illustration only and will need to be modified for your DB)
 
 library(RODBC)
+
 my_db <- odbcConnect("my_dsn") # no DB password
 my_db <- odbcConnect("my_dsn", uid = "my_username", pwd = "my_password") # DB requires username and password
 
@@ -92,6 +103,7 @@ odbcClose(my_db) # close the DB connection
 # using dplyr to work with a database
 # ...creating the sqlite database
 library(dplyr)
+
 credit <- read_csv("Chapter12/credit.csv")
 credit_db_conn <- src_sqlite("Chapter12/credit.sqlite3", create = TRUE)
 copy_to(credit_db_conn, credit, temporary = FALSE)
@@ -117,11 +129,13 @@ download.file("http://www.mysite.com/myfile.zip", "myfile.zip")
 
 # using RCurl
 library(RCurl)
+
 packt_page <- getURL("https://www.packtpub.com")
 str(packt_page, nchar.max = 200)
 
 # using httr
 library(httr)
+
 packt_page <- GET("https://www.packtpub.com")
 str(packt_page, max.level = 1)
 str(content(packt_page, type = "text"), nchar.max = 200)
@@ -130,11 +144,13 @@ str(content(packt_page, type = "text"), nchar.max = 200)
 
 # simple example
 library(rvest)
+
 packt_page <- read_html("https://www.packtpub.com")
 html_node(packt_page, "title") %>% html_text()
 
 # more realistic example
 library(rvest)
+
 cran_ml <- read_html("http://cran.r-project.org/web/views/MachineLearning.html")
 cran_ml
 
@@ -151,6 +167,7 @@ library(xml2)
 
 # simple example using jsonlite
 library(jsonlite)
+
 ml_book <- list(book_title = "Machine Learning with R", author = "Brett Lantz")
 toJSON(ml_book)
 
@@ -170,6 +187,7 @@ str(ml_book_r)
 
 # example using the httr package to query the Apple iTunes API
 library(httr)
+
 music_search <- GET("https://itunes.apple.com/search",
                     query = list(term = "Beatles",
                                  media = "music",
@@ -179,6 +197,7 @@ music_search <- GET("https://itunes.apple.com/search",
 music_search
 
 library(jsonlite)
+
 music_results <- fromJSON(content(music_search))
 str(music_results)
 
@@ -187,6 +206,7 @@ music_results$results$collectionName
 ## working with social network and graph data ----
 
 library(igraph)
+
 karate <- read.graph("karate.txt", "edgelist", directed = FALSE)
 plot(karate)
 degree(karate)

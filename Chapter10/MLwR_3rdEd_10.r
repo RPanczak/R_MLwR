@@ -50,7 +50,8 @@ CrossTable(sms_results$actual_type, sms_results$predict_type)
 
 ## Beyond accuracy: other performance measures ----
 library(caret)
-confusionMatrix(sms_results$predict_type, sms_results$actual_type, positive = "spam")
+confusionMatrix(sms_results$predict_type, sms_results$actual_type, 
+                positive = "spam")
 
 # Kappa statistic
 # example using SMS classifier
@@ -81,8 +82,12 @@ spec
 
 # example using the caret package
 library(caret)
-sensitivity(sms_results$predict_type, sms_results$actual_type, positive = "spam")
-specificity(sms_results$predict_type, sms_results$actual_type, negative = "ham")
+
+sensitivity(sms_results$predict_type, sms_results$actual_type, 
+            positive = "spam")
+
+specificity(sms_results$predict_type, sms_results$actual_type, 
+            negative = "ham")
 
 # Precision and recall
 prec <- 152 / (152 + 4)
@@ -93,8 +98,12 @@ rec
 
 # example using the caret package
 library(caret)
-posPredValue(sms_results$predict_type, sms_results$actual_type, positive = "spam")
-sensitivity(sms_results$predict_type, sms_results$actual_type, positive = "spam")
+
+posPredValue(sms_results$predict_type, sms_results$actual_type, 
+             positive = "spam")
+
+sensitivity(sms_results$predict_type, sms_results$actual_type, 
+            positive = "spam")
 
 # F-measure
 f <- (2 * prec * rec) / (prec + rec)
@@ -105,15 +114,21 @@ f
 
 ## Visualizing Performance Tradeoffs ----
 library(pROC)
+
 sms_roc <- roc(sms_results$actual_type, sms_results$prob_spam)
 
 # ROC curve for Naive Bayes
-plot(sms_roc, main = "ROC curve for SMS spam filter", col = "blue", lwd = 2, legacy.axes = TRUE)
+plot(sms_roc, 
+     main = "ROC curve for SMS spam filter", 
+     col = "blue", lwd = 2, legacy.axes = TRUE)
 
 # compare to kNN 
-sms_results_knn <- read.csv("sms_results_knn.csv")
+sms_results_knn <- read.csv("Chapter10/sms_results_knn.csv")
 sms_roc_knn <- roc(sms_results$actual_type, sms_results_knn$p_spam)
-plot(sms_roc_knn, col = "red", lwd = 2, add = TRUE)
+
+plot(sms_roc_knn, 
+     col = "red", lwd = 2, add = TRUE)
+
 
 # calculate AUC for Naive Bayes and kNN
 auc(sms_roc)
@@ -123,6 +138,7 @@ auc(sms_roc_knn)
 
 # partitioning data
 library(caret)
+
 credit <- read.csv("Chapter10/credit.csv", stringsAsFactors = TRUE)
 
 # Holdout method
@@ -153,6 +169,10 @@ credit <- read.csv("Chapter10/credit.csv", stringsAsFactors = TRUE)
 RNGversion("3.5.2") # use an older random number generator to match the book
 set.seed(123)
 folds <- createFolds(credit$default, k = 10)
+
+str(folds)
+frq(credit, default)
+frq(credit[folds$Fold01, ], default)
 
 cv_results <- lapply(folds, function(x) {
   credit_train <- credit[-x, ]
